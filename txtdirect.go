@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package txtdirect
+package minitxtd
 
 import (
 	"context"
@@ -162,8 +162,8 @@ func isIP(host string) bool {
 	return err == nil
 }
 
-// Redirect the request depending on the redirect record found
-func Redirect(w http.ResponseWriter, r *http.Request, c Config) error {
+// Serve the request depending on the redirect record found
+func (c Config) Serve(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Server", "TXTDirect")
 
 	host := r.Host
@@ -193,6 +193,7 @@ func Redirect(w http.ResponseWriter, r *http.Request, c Config) error {
 
 	rec, err := getRecord(host, r.Context(), c, r)
 	if err != nil {
+		log.Printf("Couldn't parse the record: %s", err.Error())
 		fallback(w, r, "", "", "global", http.StatusFound, c)
 		return nil
 	}
