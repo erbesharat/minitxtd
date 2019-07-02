@@ -20,7 +20,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/gomods/athens/pkg/download"
@@ -30,7 +29,6 @@ import (
 	"github.com/gomods/athens/pkg/stash"
 	"github.com/gomods/athens/pkg/storage"
 	"github.com/gomods/athens/pkg/storage/fs"
-	"github.com/mholt/caddy"
 	"github.com/spf13/afero"
 )
 
@@ -250,52 +248,5 @@ func (m *Module) DecodeImportPath() error {
 		return err
 	}
 	m.Name = decoded
-	return nil
-}
-
-// ParseGomods parses the txtdirect config for gomods
-func (gomods *Gomods) ParseGomods(c *caddy.Controller) error {
-	switch c.Val() {
-	case "gobinary":
-		gomods.GoBinary = c.RemainingArgs()[0]
-
-	case "workers":
-		value, err := strconv.Atoi(c.RemainingArgs()[0])
-		if err != nil {
-			return c.ArgErr()
-		}
-		gomods.Workers = value
-
-	case "cache":
-		gomods.Cache.Enable = true
-		c.NextArg()
-		if c.Val() != "{" {
-			break
-		}
-		for c.Next() {
-			if c.Val() == "}" {
-				break
-			}
-			err := gomods.Cache.ParseCache(c)
-			if err != nil {
-				return err
-			}
-		}
-	default:
-		return c.ArgErr() // unhandled option for gomods
-	}
-	return nil
-}
-
-// ParseCache parses the txtdirect config for gomods cache
-func (cache *Cache) ParseCache(c *caddy.Controller) error {
-	switch c.Val() {
-	case "type":
-		cache.Type = c.RemainingArgs()[0]
-	case "path":
-		cache.Path = c.RemainingArgs()[0]
-	default:
-		return c.ArgErr() // unhandled option for gomods cache
-	}
 	return nil
 }
