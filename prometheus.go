@@ -20,7 +20,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mholt/caddy"
 	"github.com/mholt/caddy/caddyhttp/httpserver"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -107,14 +106,10 @@ func (p *Prometheus) start() error {
 	return nil
 }
 
-func (p *Prometheus) Setup(c *caddy.Controller) {
+func (p *Prometheus) Setup() {
 	p.handler = promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{
 		ErrorHandling: promhttp.HTTPErrorOnError,
 		ErrorLog:      log.New(os.Stderr, "", log.LstdFlags),
-	})
-
-	once.Do(func() {
-		c.OnStartup(p.start)
 	})
 
 	cfg := httpserver.GetConfig(c)

@@ -13,13 +13,4 @@ limitations under the License.
 
 package minitxtd
 
-import (
-	"github.com/mholt/caddy/caddy/caddymain"
-)
-
-func main() {
-	caddymain.EnableTelemetry = false
-	caddymain.Run()
-}
-
 var allOptions = []string{"host", "path", "gometa", "www"}
